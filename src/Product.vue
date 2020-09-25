@@ -100,9 +100,17 @@
         :src="fonts_2_3_path_array[i]"
       />
     </div>
-    <audio id="clockSnd" src="./assets/voice/clock.mp3" preload loop="loop"></audio>
+    <audio
+      id="clockSnd"
+      src="./assets/voice/clock.mp3"
+      preload
+      loop="loop"
+    ></audio>
+    <audio id="bgm" src="./assets/voice/bgm.mp3" preload loop="loop"></audio>
     <audio id="doorSnd" src="./assets/voice/door.mp3" preload></audio>
     <audio id="getSnd" src="./assets/voice/get.mp3" preload></audio>
+    <audio id="walkSnd" src="./assets/voice/walk.mp3" preload></audio>
+    <audio id="clickSnd" src="./assets/voice/click.mp3" preload></audio>
     <img id="text1" src="./assets/text1.png" />
     <img id="text2" src="./assets/text2.png" />
     <img id="text3" src="./assets/text3.png" />
@@ -135,7 +143,7 @@ export default {
       fonts_1_3_path_array: [],
       fonts_2_1: "产品狸m",
       fonts_2_2: "我已经画出最新的产品原型图啦d",
-      fonts_2_3: "帮我把他们送给设基犬吧t",
+      fonts_2_3: "帮我把它们送给设基犬吧t",
       fonts_2_1_path_array: [],
       fonts_2_2_path_array: [],
       fonts_2_3_path_array: [],
@@ -149,12 +157,18 @@ export default {
     exclamationClick: function () {
       if (this.waitingExclamationClick) {
         this.waitingExclamationClick = false;
+        var clickSnd = document.getElementById("clickSnd");
+        clickSnd.volume = 0.6;
+        clickSnd.play();
         this.currentCb();
       }
     },
     screenClick: function () {
       if (this.waitingScreenClick) {
         this.waitingScreenClick = false;
+        var clickSnd = document.getElementById("clickSnd");
+        clickSnd.volume = 0.6;
+        clickSnd.play();
         this.currentCb();
       }
     },
@@ -173,7 +187,7 @@ export default {
       setTimeout(() => {
         $("#exclamation").fadeIn(500);
       }, 300);
-      
+
       $("#picture").fadeIn(300);
       $("#computer").fadeIn(300);
       $("#particle").fadeIn(300);
@@ -181,8 +195,11 @@ export default {
       setTimeout(() => {
         that.ani_questText();
         var clockSnd = document.getElementById("clockSnd");
-        clockSnd.volume = 0.2;
+        clockSnd.volume = 0.6;
         clockSnd.play();
+        var bgm = document.getElementById("bgm");
+        bgm.volume = 0.6;
+        bgm.play();
       }, 1000);
     },
     /**
@@ -242,8 +259,11 @@ export default {
         ],
         function () {
           // $("#particle").fadeOut(1000);
+          that.ani_FBIOpenTheDoor();
+          /*
           that.currentCb = that.ani_FBIOpenTheDoor;
           that.waitingExclamationClick = true;
+          */
         }
       );
     },
@@ -256,7 +276,7 @@ export default {
       $("#door-open").fadeIn(0);
       $("#door").hide();
       var doorSnd = document.getElementById("doorSnd");
-      doorSnd.volume = 0.2;
+      doorSnd.volume = 0.6;
       doorSnd.play();
       setTimeout(() => {
         $("#door-open").hide();
@@ -274,16 +294,16 @@ export default {
       var boy = $("#boy");
       boy.fadeIn(500);
       setTimeout(() => {
-        if(that.sex == "boy")
-        {
+        if (that.sex == "boy") {
           boy.attr("src", boyImg);
           boy.css("width", "12vw");
-        }
-        else{
+        } else {
           boy.attr("src", girlImg);
           boy.css("width", "15vw");
         }
-        
+        var walkSnd = document.getElementById("walkSnd");
+        walkSnd.volume = 0.6;
+        walkSnd.play();
         boy.attr("class", "boy-walk");
         that.ani_stop();
       }, 500);
@@ -295,19 +315,22 @@ export default {
       var that = this;
       var boy = $("#boy");
       var img;
-      if(that.sex == "boy"){
+      if (that.sex == "boy") {
         img = require("./assets/boy.png");
       } else {
         img = require("./assets/girl.png");
       }
       setTimeout(() => {
         boy.attr("src", img);
-        if(that.scc == "boy") {
+        if (that.scc == "boy") {
           boy.css("width", (125 * 100) / 1080 + "vw");
         } else {
           boy.css("width", "13vw");
         }
-        that.ani_dialog();
+        var walkSnd = document.getElementById("walkSnd");
+        walkSnd.pause();
+        that.currentCb = that.ani_dialog;
+        that.waitingExclamationClick = true;
       }, 2000);
     },
     /**
@@ -343,7 +366,7 @@ export default {
       setTimeout(() => {
         $("#quest-icon").fadeIn(0);
         var getSnd = document.getElementById("getSnd");
-        getSnd.volume = 0.2;
+        getSnd.volume = 0.6;
         getSnd.play();
         that.ani_textDisappear();
       }, 500);
@@ -384,6 +407,8 @@ export default {
       $("#bg-mask").attr("class", "mask-close");
       var clockSnd = $("#clockSnd");
       clockSnd.attr("src", "#");
+      var bgm = $("#bgm");
+      bgm.attr("src", "#");
       setTimeout(() => {
         $("#animal").hide();
         $("#bg").hide();
@@ -416,7 +441,6 @@ export default {
         $("#text6").hide();
         $("#text7").hide();
       }, 3000);
-
     },
   },
   watch: {
@@ -462,17 +486,15 @@ export default {
     $("#text5").hide();
     $("#text6").hide();
     $("#text7").hide();
-    if(this.sex == "boy")
-    {
+    if (this.sex == "boy") {
       $("#boy").attr("src", require("./assets/boy.png"));
-    }
-    else {
+    } else {
       $("#boy").attr("src", require("./assets/girl.png"));
       $("#boy").css("width", "13vw");
-  //       width: getW(125);
+      //       width: getW(125);
 
-  // left: getW(117);
-  // top: getH(1163);
+      // left: getW(117);
+      // top: getH(1163);
     }
 
     var tempImg;
@@ -537,9 +559,12 @@ export default {
     //声音加载
     window.onclick = function () {
       var clockSnd = document.getElementById("clockSnd");
-      clockSnd.volume = 0.2;
+      clockSnd.volume = 0.6;
       clockSnd.play();
-    }
+      var bgm = document.getElementById("bgm");
+      bgm.volume = 0.6;
+      bgm.play();
+    };
   },
 };
 </script>
@@ -923,7 +948,7 @@ img {
 //    animation: bgDarken 3s linear forwards;
 //   -moz-animation: bgDarken 3s linear forwards;
 //   -webkit-animation: bgDarken 3s linear forwards;
-//   -o-animation: bgDarken 3s linear forwards; 
+//   -o-animation: bgDarken 3s linear forwards;
 // }
 // @keyframes bgDarken {
 //   0% {
@@ -946,7 +971,7 @@ img {
     opacity: 0;
   }
   100% {
-    opacity: 0.1;
+    opacity: 0.2;
   }
 }
 .mask-lighten {
@@ -964,7 +989,7 @@ img {
   }
 }
 .mask-close {
-    animation: maskClose 3s linear forwards;
+  animation: maskClose 3s linear forwards;
   -moz-animation: maskClose 3s linear forwards;
   -webkit-animation: maskClose 3s linear forwards;
   -o-animation: maskClose 3s linear forwards;
@@ -978,7 +1003,7 @@ img {
   }
 }
 .mask-open {
-    animation: maskOpen 1s linear forwards;
+  animation: maskOpen 1s linear forwards;
   -moz-animation: maskOpen 1s linear forwards;
   -webkit-animation: maskOpen 1s linear forwards;
   -o-animation: maskOpen 1s linear forwards;
@@ -1106,7 +1131,7 @@ img {
   width: getW(63);
   //  height: getH(113);
 
-  left: getW(380);
+  left: getW(400);
   top: getH(1084);
   opacity: 1;
   z-index: 8;
@@ -1118,22 +1143,18 @@ img {
 }
 @keyframes iconMove {
   0% {
-    left: getW(380);
     top: getH(1150);
     opacity: 1;
   }
   50% {
-    left: getW(380);
     top: getH(1084);
     opacity: 1;
   }
   75% {
-    left: getW(380);
     top: getH(1084);
     opacity: 1;
   }
   100% {
-    left: getW(380);
     top: getH(1084);
     opacity: 0;
   }
